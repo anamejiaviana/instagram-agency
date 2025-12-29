@@ -17,11 +17,10 @@ export default function AgenciaProFinal() {
     setLoading(true);
     setView('result');
     
-    // Motor de búsqueda de imagen real (Puente directo)
-    const query = encodeURIComponent(`${brands[activeAccount].estilo} ${prompt}`);
-    const finalUrl = `https://loremflickr.com/800/1000/${query}`;
+    // Usamos términos en inglés internamente para asegurar que siempre haya imagen
+    const searchTerms = activeAccount === 'Clínica Dental' ? 'dentist,toothbrush' : 'pizza,italian,food';
+    const finalUrl = `https://source.unsplash.com/featured/800x1000?${searchTerms}`;
     
-    // Simulamos el tiempo de "pensamiento" de la IA
     setTimeout(() => {
       setImageUrl(finalUrl);
       setLoading(false);
