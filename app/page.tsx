@@ -1,117 +1,92 @@
 "use client";
 import React, { useState } from 'react';
 
-// ESTRUCTURA DE LA APP DE AGENCIA PROFESIONAL
-export default function AgenciaDigitalApp() {
-  const [view, setView] = useState('home'); // home, brief, create, result, settings
+export default function AppAgenciaPro() {
+  const [view, setView] = useState('home'); 
   const [activeAccount, setActiveAccount] = useState('Pizzería Napoli');
-  const [status, setStatus] = useState('PENDIENTE');
   const [prompt, setPrompt] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
-  // CONFIGURACIÓN DE MARCAS (Esto irá a una base de datos online)
   const brands: any = {
-    'Pizzería Napoli': { color: '#3b82f6', desc: 'Tradición italiana a la leña.', tono: 'Cercano' },
-    'Clínica Dental': { color: '#10b981', desc: 'Salud y estética avanzada.', tono: 'Profesional' }
+    'Pizzería Napoli': { color: '#ef4444', desc: 'Pizza artesanal a la leña', estilo: 'Cálido, rústico, apetecible' },
+    'Clínica Dental': { color: '#0ea5e9', desc: 'Odontología moderna y estética', estilo: 'Limpio, profesional, minimalista' }
   };
 
   const s = {
-    wrapper: { backgroundColor: '#000', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'start', fontFamily: 'sans-serif', color: 'white' },
-    phone: { width: '100%', maxWidth: '420px', backgroundColor: '#0D0D0D', minHeight: '100vh', padding: '30px', position: 'relative' as const, borderRight: '1px solid #222', borderLeft: '1px solid #222' },
-    card: { backgroundColor: '#161616', borderRadius: '24px', padding: '20px', border: '1px solid #222', marginBottom: '20px' },
-    btn: (bg: string, col: string) => ({ backgroundColor: bg, color: col, border: 'none', padding: '15px', borderRadius: '15px', fontWeight: 'bold' as const, cursor: 'pointer', width: '100%' })
+    wrapper: { backgroundColor: '#000', minHeight: '100vh', color: 'white', fontFamily: 'sans-serif' },
+    phone: { maxWidth: '420px', margin: '0 auto', backgroundColor: '#0D0D0D', minHeight: '100vh', padding: '25px', position: 'relative' as const },
+    btn: (bg: string) => ({ backgroundColor: bg, color: bg === '#fff' ? '#000' : '#fff', border: 'none', padding: '16px', borderRadius: '16px', fontWeight: 'bold' as const, width: '100%', cursor: 'pointer' }),
+    input: { width: '100%', backgroundColor: '#1A1A1A', border: '1px solid #333', borderRadius: '15px', padding: '15px', color: 'white', marginTop: '10px', fontSize: '14px', outline: 'none' }
   };
 
-  // VISTA: BRIEFING (Lógica RELLENAR)
-  if (view === 'brief') {
-    return (
-      <div style={s.wrapper}>
-        <div style={s.phone}>
-          <button onClick={() => setView('home')} style={{color: '#666', background: 'none', border: 'none', marginBottom: '20px'}}>← Volver</button>
-          <h1 style={{fontSize: '24px', fontWeight: '900'}}>Estrategia Noviembre</h1>
-          <p style={{color: brands[activeAccount].color, fontSize: '12px', fontWeight: 'bold'}}>{activeAccount.toUpperCase()}</p>
-          <div style={{marginTop: '30px'}}>
-            <label style={{fontSize: '10px', color: '#444'}}>OBJETIVO DEL MES</label>
-            <textarea style={{width: '100%', backgroundColor: '#1A1A1A', border: '1px solid #333', borderRadius: '15px', padding: '15px', color: 'white', marginTop: '10px', height: '100px'}} placeholder="Ej: Aumentar reservas de cenas..." />
-            <button onClick={() => {setStatus('ENVIADO'); setView('home');}} style={{...s.btn('#fff', '#000'), marginTop: '20px'}}>GUARDAR Y NOTIFICAR</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const generateAI = async () => {
+    setLoading(true);
+    setView('result');
+    
+    // Aquí es donde la app usará la API Key que pusiste en Vercel
+    // Por ahora simulamos la respuesta pro, pero el código ya está listo para recibir la URL de Nano Banana
+    setTimeout(() => {
+      setResult({
+        image: `https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?q=80&w=800`, // Placeholder pro hasta el primer redeploy con API
+        copy: `✨ [ESTILO: ${brands[activeAccount].estilo}]\n\n¿Buscas la perfección en cada detalle? En ${activeAccount} entendemos que ${prompt} es la clave.\n\nComo expertos en ${brands[activeAccount].desc}, hemos creado esta pieza pensando en ti. ¡La calidad no es negociable!\n\n💬 Cuéntanos qué te parece en los comentarios.\n\n#${activeAccount.replace(/\s/g,'')} #IA #MarketingPro`
+      });
+      setLoading(false);
+    }, 2500);
+  };
 
-  // VISTA: GENERADOR (Nano Banana)
-  if (view === 'create') {
-    return (
-      <div style={s.wrapper}>
-        <div style={s.phone}>
-          <button onClick={() => setView('home')} style={{color: '#666', background: 'none', border: 'none', marginBottom: '20px'}}>← Cancelar</button>
-          <h1 style={{fontSize: '24px', fontWeight: '900'}}>IA Creator</h1>
-          <textarea 
-            value={prompt} 
-            onChange={(e) => setPrompt(e.target.value)}
-            style={{width: '100%', backgroundColor: '#1A1A1A', border: '1px solid #333', borderRadius: '15px', padding: '15px', color: 'white', marginTop: '20px', height: '150px'}} 
-            placeholder="Describe la imagen..." 
-          />
-          <button onClick={() => setView('result')} style={{...s.btn(brands[activeAccount].color, '#fff'), marginTop: '20px'}}>GENERAR PIEZA ✨</button>
-        </div>
-      </div>
-    );
-  }
+  if (view === 'create') return (
+    <div style={s.wrapper}><div style={s.phone}>
+      <button onClick={() => setView('home')} style={{background: 'none', color: '#666', border: 'none', marginBottom: '20px'}}>← Volver</button>
+      <h1 style={{fontSize: '28px', fontWeight: '900'}}>IA Creator</h1>
+      <p style={{fontSize: '14px', color: '#666'}}>Generando para <b style={{color: brands[activeAccount].color}}>{activeAccount}</b></p>
+      <textarea 
+        value={prompt} 
+        onChange={(e) => setPrompt(e.target.value)}
+        placeholder="Ej: Niño cepillándose los dientes con una sonrisa..." 
+        style={{...s.input, height: '150px', marginTop: '20px'}}
+      />
+      <button onClick={generateAI} style={{...s.btn(brands[activeAccount].color), marginTop: '20px'}}>GENERAR CON NANO BANANA ✨</button>
+    </div></div>
+  );
 
-  // VISTA: RESULTADO
-  if (view === 'result') {
-    return (
-      <div style={s.wrapper}>
-        <div style={s.phone}>
-          <h1 style={{fontSize: '24px', fontWeight: '900'}}>Propuesta</h1>
-          <div style={{width: '100%', aspectRatio: '4/5', backgroundColor: '#111', borderRadius: '24px', margin: '20px 0', border: `2px solid ${brands[activeAccount].color}`, display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '20px'}}>
-            <p style={{fontSize: '12px', color: '#666'}}>Aquí aparecerá la imagen de Nano Banana para:<br/><b>{prompt}</b></p>
-          </div>
-          <div style={s.card}>
-            <p style={{fontSize: '13px', lineHeight: '1.6'}}><b>Copy:</b> ¡Hola seguidores de {activeAccount}! Hoy os traemos {prompt}. ¡No te lo pierdas!</p>
-          </div>
-          <button onClick={() => {setView('home'); setPrompt('');}} style={s.btn('#fff', '#000')}>FINALIZAR</button>
-        </div>
+  if (view === 'result') return (
+    <div style={s.wrapper}><div style={s.phone}>
+      <h1 style={{fontSize: '24px', fontWeight: '900'}}>{loading ? 'Creando arte...' : 'Resultado Final'}</h1>
+      <div style={{width: '100%', aspectRatio: '4/5', backgroundColor: '#111', borderRadius: '24px', margin: '20px 0', border: '1px solid #222', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        {loading ? <div className="spinner"></div> : <img src={result?.image} style={{width: '100%', height: '100%', objectFit: 'cover'}} />}
       </div>
-    );
-  }
+      {!loading && (
+        <div style={{backgroundColor: '#161616', padding: '20px', borderRadius: '20px', border: '1px solid #222'}}>
+          <p style={{fontSize: '14px', lineHeight: '1.6', whiteSpace: 'pre-wrap'}}>{result?.copy}</p>
+        </div>
+      )}
+      <button onClick={() => setView('home')} style={{...s.btn('#fff'), marginTop: '20px'}}>LISTO</button>
+    </div></div>
+  );
 
-  // HOME PRINCIPAL
   return (
-    <div style={s.wrapper}>
-      <div style={s.phone}>
-        <header style={{marginBottom: '40px'}}>
-          <select 
-            onChange={(e) => setActiveAccount(e.target.value)} 
-            style={{backgroundColor: 'transparent', color: 'white', border: 'none', fontSize: '24px', fontWeight: '900', outline: 'none'}}
-          >
-            <option style={{color: '#000'}}>Pizzería Napoli</option>
-            <option style={{color: '#000'}}>Clínica Dental</option>
-          </select>
-          <div style={{fontSize: '10px', color: brands[activeAccount].color, fontWeight: 'bold', letterSpacing: '2px', marginTop: '5px'}}>DASHBOARD AGENCIA</div>
-        </header>
+    <div style={s.wrapper}><div style={s.phone}>
+      <header style={{marginBottom: '40px'}}>
+        <select onChange={(e) => setActiveAccount(e.target.value)} style={{background: 'none', color: '#fff', border: 'none', fontSize: '24px', fontWeight: '900', outline: 'none'}}>
+          <option style={{color: '#000'}}>Pizzería Napoli</option>
+          <option style={{color: '#000'}}>Clínica Dental</option>
+        </select>
+        <div style={{fontSize: '10px', color: brands[activeAccount].color, fontWeight: 'bold', letterSpacing: '2px', marginTop: '5px'}}>DASHBOARD V1.0</div>
+      </header>
 
-        <section onClick={() => setView('create')} style={{backgroundColor: brands[activeAccount].color, padding: '30px', borderRadius: '25px', cursor: 'pointer', marginBottom: '30px'}}>
-          <h2 style={{margin: 0, fontSize: '20px'}}>+ Crear Post</h2>
-          <p style={{margin: '5px 0 0 0', fontSize: '12px', opacity: 0.8}}>Generar contenido para {activeAccount}</p>
-        </section>
+      <section onClick={() => setView('create')} style={{backgroundColor: brands[activeAccount].color, padding: '30px', borderRadius: '30px', cursor: 'pointer', marginBottom: '30px', boxShadow: `0 10px 30px ${brands[activeAccount].color}33`}}>
+        <h2 style={{margin: 0}}>+ Crear Contenido</h2>
+        <p style={{margin: '5px 0 0 0', opacity: 0.8, fontSize: '13px'}}>Impulsa tu marca con IA</p>
+      </section>
 
-        <div style={s.card}>
-          <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-            <div>
-              <p style={{margin: 0, fontWeight: 'bold'}}>Noviembre</p>
-              <p style={{margin: '5px 0 0 0', fontSize: '10px', color: status === 'PENDIENTE' ? '#f59e0b' : '#10b981'}}>● {status}</p>
-            </div>
-            {status === 'PENDIENTE' && <button onClick={() => setView('brief')} style={{backgroundColor: '#fff', border: 'none', padding: '10px 15px', borderRadius: '10px', fontWeight: 'bold', fontSize: '10px'}}>RELLENAR</button>}
-          </div>
+      <div style={{backgroundColor: '#161616', padding: '20px', borderRadius: '25px', border: '1px solid #222'}}>
+        <p style={{margin: 0, fontWeight: 'bold'}}>Estrategia Mensual</p>
+        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '15px'}}>
+          <span style={{fontSize: '12px', color: '#666'}}>Noviembre</span>
+          <button style={{backgroundColor: '#fff', border: 'none', padding: '8px 15px', borderRadius: '10px', fontSize: '10px', fontWeight: 'bold'}}>RELLENAR</button>
         </div>
-
-        <nav style={{position: 'absolute', bottom: '30px', left: '30px', right: '30px', backgroundColor: '#161616', height: '70px', borderRadius: '25px', display: 'flex', justifyContent: 'space-around', alignItems: 'center', border: '1px solid #333'}}>
-          <span>🏠</span>
-          <span style={{opacity: 0.2}}>📅</span>
-          <span style={{opacity: 0.2}}>⚙️</span>
-        </nav>
       </div>
-    </div>
+    </div></div>
   );
 }
